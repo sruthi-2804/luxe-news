@@ -4,5 +4,6 @@ export type Article = {
   summary: string;
   category: string;
   source: string;
+  url: string | null;
   published_at: string;
 };

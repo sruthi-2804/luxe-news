@@ -1,4 +1,5 @@
 import ArticleCard from "./components/ArticleCard";
+import RefreshButton from "./components/RefreshButton";
 import { supabase } from "./lib/supabaseClient";
 
 export default async function Home() {
@@ -10,11 +11,14 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-zinc-50">
       <header className="border-b border-zinc-200 bg-white">
-        <div className="max-w-5xl mx-auto px-6 py-8">
-          <h1 className="text-3xl font-bold text-zinc-900">Luxe News</h1>
-          <p className="text-zinc-500 mt-1">
-            Curated luxury fashion news, organized for you.
-          </p>
+        <div className="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-zinc-900">Luxe News</h1>
+            <p className="text-zinc-500 mt-1">
+              Curated luxury fashion news, organized for you.
+            </p>
+          </div>
+          <RefreshButton />
         </div>
       </header>
 

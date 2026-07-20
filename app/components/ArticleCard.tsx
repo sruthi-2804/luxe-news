@@ -10,10 +10,20 @@ export default function ArticleCard({ article }: { article: Article }) {
         {article.title}
       </h2>
       <p className="text-zinc-600 mb-4">{article.summary}</p>
-      <div className="text-sm text-zinc-400 flex justify-between">
+      <div className="text-sm text-zinc-400 flex justify-between items-center">
         <span>{article.source}</span>
         <span>{article.published_at}</span>
       </div>
+      {article.url && (
+        <a
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block mt-3 text-sm font-medium text-zinc-900 hover:underline"
+        >
+          Read full article →
+        </a>
+      )}
     </article>
   );
 }
