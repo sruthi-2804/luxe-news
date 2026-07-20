@@ -14,24 +14,26 @@ Paying customers log in to read it. An admin page controls the system.
 
 ## Build phases (each phase fully works before we start the next)
 
-### Phase 0 — Foundations (setup)
-- [ ] Install Node.js
-- [ ] Create the Next.js app, run it locally, see "Hello World" in the browser
-- [ ] Put it on GitHub
+### Phase 0 — Foundations (setup) ✅ DONE
+- [x] Install Node.js
+- [x] Create the Next.js app, run it locally, see "Hello World" in the browser
+- [x] Put it on GitHub
 
 ### Phase 1 — Show hardcoded news (learn the frontend) ✅ DONE
 - [x] Build the news page layout with 3-4 fake/sample articles
 - [x] Make it look like a real luxury magazine
 
-### Phase 2 — The LLM curation engine (learn the backend + LLM)
-- [ ] Get an OpenAI or Gemini API token from your father
-- [ ] Write the backend job: web search -> send to Claude -> get curated articles
-- [ ] Print the results to a terminal (no database yet)
+### Phase 2 — The LLM curation engine (learn the backend + LLM) ✅ DONE
+- [x] Get an OpenAI API token from your father
+- [x] Write the backend job: web search -> OpenAI -> get curated articles as JSON
+- [x] `/api/curate` endpoint returns curated articles
 
-### Phase 3 — Store & display real data
-- [ ] Set up Supabase database
-- [ ] Save curated articles to the database
-- [ ] News page reads from the database instead of fake data
+### Phase 3 — Store & display real data ✅ DONE
+- [x] Set up Supabase database (articles table + RLS)
+- [x] Save curated articles to the database
+- [x] News page reads from the database instead of fake data
+
+Known rough edges to fix in Phase 4: duplicate articles on repeated runs (no dedup/replace yet), messy `source` field (LLM includes raw markdown links).
 
 ### Phase 4 — Automation
 - [ ] Cron job runs the curation engine every 12 hours
@@ -52,4 +54,4 @@ Paying customers log in to read it. An admin page controls the system.
 - [ ] Deploy to Vercel (or your father's server)
 - [ ] Custom domain
 
-## Current status: Phase 0
+## Current status: Phase 4 next
