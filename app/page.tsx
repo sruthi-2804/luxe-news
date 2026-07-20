@@ -1,8 +1,20 @@
+import { redirect } from "next/navigation";
 import ArticleCard from "./components/ArticleCard";
 import RefreshButton from "./components/RefreshButton";
-import { supabase } from "./lib/supabaseClient";
+import SignOutButton from "./components/SignOutButton";
+import { createClient } from "./lib/supabase/server";
 
 export default async function Home() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const { data: articles } = await supabase
     .from("articles")
     .select("*")
@@ -18,7 +30,10 @@ export default async function Home() {
               Curated luxury fashion news, organized for you.
             </p>
           </div>
-          <RefreshButton />
+          <div className="flex items-center gap-4">
+            <RefreshButton />
+            <SignOutButton />
+          </div>
         </div>
       </header>
 

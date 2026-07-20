@@ -58,7 +58,7 @@ export async function runCuration() {
     },
   });
 
-  const parsed = response.output_parsed ?? JSON.parse(response.output_text);
+  const parsed = JSON.parse(response.output_text);
 
   // Replace old articles with this fresh batch, instead of piling up duplicates
   await supabaseAdmin.from("articles").delete().neq("id", 0);
