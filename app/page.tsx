@@ -1,7 +1,12 @@
 import ArticleCard from "./components/ArticleCard";
-import { sampleArticles } from "./data/articles";
+import { supabase } from "./lib/supabaseClient";
 
-export default function Home() {
+export default async function Home() {
+  const { data: articles } = await supabase
+    .from("articles")
+    .select("*")
+    .order("published_at", { ascending: false });
+
   return (
     <div className="min-h-screen bg-zinc-50">
       <header className="border-b border-zinc-200 bg-white">
@@ -15,7 +20,7 @@ export default function Home() {
 
       <main className="max-w-5xl mx-auto px-6 py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {sampleArticles.map((article) => (
+          {articles?.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}
         </div>

@@ -1,4 +1,4 @@
-import { Article } from "../data/articles";
+import { Article } from "../lib/types";
 
 export default function ArticleCard({ article }: { article: Article }) {
   return (
@@ -12,7 +12,7 @@ export default function ArticleCard({ article }: { article: Article }) {
       <p className="text-zinc-600 mb-4">{article.summary}</p>
       <div className="text-sm text-zinc-400 flex justify-between">
         <span>{article.source}</span>
-        <span>{article.publishedAt}</span>
+        <span>{article.published_at}</span>
       </div>
     </article>
   );

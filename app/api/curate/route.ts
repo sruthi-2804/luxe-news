@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
+import { supabaseAdmin } from "../../lib/supabaseAdmin";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -56,9 +57,16 @@ export async function GET() {
     },
   });
 
-  console.log("output_parsed:", response.output_parsed);
-  console.log("output_text:", response.output_text);
-
   const parsed = response.output_parsed ?? JSON.parse(response.output_text);
-  return NextResponse.json(parsed);
+
+  const { data, error } = await supabaseAdmin
+    .from("articles")
+    .insert(parsed.articles)
+    .select();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ inserted: data.length, articles: data });
 }
