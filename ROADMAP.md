@@ -19,9 +19,9 @@ Paying customers log in to read it. An admin page controls the system.
 - [ ] Create the Next.js app, run it locally, see "Hello World" in the browser
 - [ ] Put it on GitHub
 
-### Phase 1 — Show hardcoded news (learn the frontend)
-- [ ] Build the news page layout with 3-4 fake/sample articles
-- [ ] Make it look like a real luxury magazine
+### Phase 1 — Show hardcoded news (learn the frontend) ✅ DONE
+- [x] Build the news page layout with 3-4 fake/sample articles
+- [x] Make it look like a real luxury magazine
 
 ### Phase 2 — The LLM curation engine (learn the backend + LLM)
 - [ ] Get an OpenAI or Gemini API token from your father
