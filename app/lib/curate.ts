@@ -5,7 +5,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function runCuration() {
   const response = await openai.responses.create({
-    model: "gpt-5.6",
+    model: "gpt-4.1",
     tools: [{ type: "web_search" }],
     input: [
       {
