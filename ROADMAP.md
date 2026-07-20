@@ -35,9 +35,13 @@ Paying customers log in to read it. An admin page controls the system.
 
 Known rough edges to fix in Phase 4: duplicate articles on repeated runs (no dedup/replace yet), messy `source` field (LLM includes raw markdown links).
 
-### Phase 4 — Automation
-- [ ] Cron job runs the curation engine every 12 hours
-- [ ] "Refresh now" button for on-demand updates
+### Phase 4 — Automation ✅ CODE DONE (blocked on OpenAI billing to fully test)
+- [x] Fixed duplicates: each run now replaces old articles instead of piling up
+- [x] Clean `source` (name only) + new `url` field for "Read full article" links
+- [x] `/api/curate` protected with CRON_SECRET (no more open/unauthenticated endpoint)
+- [x] "Refresh Now" button via a Server Action (temporary: publicly visible until Phase 5/6 adds admin-only gating)
+- [x] `vercel.json` cron config written — set to once/day (Vercel Hobby tier limit; revisit at Phase 8 for true 12h cadence via Pro plan or an external cron service)
+- [ ] Live end-to-end test of the button (blocked — OpenAI account credit balance is $0, needs funding)
 
 ### Phase 5 — User login
 - [ ] Sign up / log in with Supabase
@@ -54,4 +58,4 @@ Known rough edges to fix in Phase 4: duplicate articles on repeated runs (no ded
 - [ ] Deploy to Vercel (or your father's server)
 - [ ] Custom domain
 
-## Current status: Phase 4 next
+## Current status: Phase 4 code complete, blocked on OpenAI billing. Phase 5 (login) next.
