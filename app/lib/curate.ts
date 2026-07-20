@@ -58,6 +58,17 @@ export async function runCuration() {
     },
   });
 
+  const usage = response.usage;
+  console.log(
+    `[curate] tokens used — input: ${usage?.input_tokens}, output: ${usage?.output_tokens}, total: ${usage?.total_tokens}`
+  );
+
+  await supabaseAdmin.from("api_usage").insert({
+    input_tokens: usage?.input_tokens ?? 0,
+    output_tokens: usage?.output_tokens ?? 0,
+    total_tokens: usage?.total_tokens ?? 0,
+  });
+
   const parsed = JSON.parse(response.output_text);
 
   // Replace old articles with this fresh batch, instead of piling up duplicates

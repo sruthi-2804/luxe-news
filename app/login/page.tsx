@@ -30,7 +30,7 @@ export default async function LoginPage({
             type="email"
             placeholder="Email"
             required
-            className="border border-zinc-300 rounded px-3 py-2 text-sm"
+            className="border border-zinc-300 rounded px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 bg-white"
           />
           <input
             name="password"
@@ -38,7 +38,7 @@ export default async function LoginPage({
             placeholder="Password"
             required
             minLength={6}
-            className="border border-zinc-300 rounded px-3 py-2 text-sm"
+            className="border border-zinc-300 rounded px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 bg-white"
           />
           <button
             formAction={signIn}
@@ -48,7 +48,7 @@ export default async function LoginPage({
           </button>
           <button
             formAction={signUp}
-            className="rounded border border-zinc-300 px-4 py-2 text-sm font-medium hover:bg-zinc-50"
+            className="rounded border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
           >
             Create Account
           </button>
