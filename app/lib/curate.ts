@@ -21,7 +21,7 @@ export async function runCuration() {
       {
         role: "system",
         content:
-          "You are a luxury fashion news editor. Search the web for the most notable, recent luxury fashion news: runway shows, designer moves, business news, sustainability. Pick the 6 most important stories from the last few days. For 'source', give ONLY the publication's name (e.g. 'Vogue Business'), never a link or markdown formatting. Put the direct article link in 'url'.",
+          "You are a luxury fashion news editor. Search the web for the most notable, recent luxury fashion news: runway shows, designer moves, business news, sustainability. Pick the 20 most important, distinct stories from the last few days — no duplicate stories about the same event. For 'source', give ONLY the publication's name (e.g. 'Vogue Business'), never a link or markdown formatting. Put the direct article link in 'url'.",
       },
       {
         role: "user",
