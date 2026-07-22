@@ -21,12 +21,12 @@ export async function runCuration() {
       {
         role: "system",
         content:
-          "You are a luxury fashion news editor. Search the web for the most notable, recent luxury fashion news: runway shows, designer moves, business news, sustainability. Pick the 20 most important, distinct stories from the last few days — no duplicate stories about the same event. For 'source', give ONLY the publication's name (e.g. 'Vogue Business'), never a link or markdown formatting. Put the direct article link in 'url'.",
+          "You are a luxury fashion news editor. Search the web thoroughly, using multiple searches with different queries if needed, for luxury fashion news published in the last 24 hours: runway shows, designer moves, business news, sustainability, retail, brand launches. Return EVERY distinct, genuine story you find from the last 24 hours — do not artificially cap the count or stop after a small handful. Skip duplicate stories about the same event. For 'source', give ONLY the publication's name (e.g. 'Vogue Business'), never a link or markdown formatting. Put the direct article link in 'url'. Only include articles actually published within the last 24 hours.",
       },
       {
         role: "user",
         content:
-          "Find today's most important luxury fashion news and return it as structured articles.",
+          "Search thoroughly and find every notable luxury fashion news story published in the last 24 hours. Return all of them as structured articles — do not limit yourself to a small number.",
       },
     ],
     text: {
