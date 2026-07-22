@@ -3,9 +3,19 @@ import { supabaseAdmin } from "./supabaseAdmin";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Price per 1 million tokens, in USD. Update if the model changes.
+const PRICING: Record<string, { input: number; output: number }> = {
+  "gpt-5.4-nano": { input: 0.2, output: 1.25 },
+  "gpt-5.6-luna": { input: 1.0, output: 6.0 },
+  "gpt-5.6-terra": { input: 2.5, output: 15.0 },
+  "gpt-5.6-sol": { input: 5.0, output: 30.0 },
+};
+
+const MODEL = "gpt-5.4-nano";
+
 export async function runCuration() {
   const response = await openai.responses.create({
-    model: "gpt-5.4-nano",
+    model: MODEL,
     tools: [{ type: "web_search" }],
     input: [
       {
@@ -59,14 +69,42 @@ export async function runCuration() {
   });
 
   const usage = response.usage;
+  const inputTokens = usage?.input_tokens ?? 0;
+  const outputTokens = usage?.output_tokens ?? 0;
+  const totalTokens = usage?.total_tokens ?? 0;
+
+  const price = PRICING[MODEL];
+  const costUsd = price
+    ? (inputTokens / 1_000_000) * price.input +
+      (outputTokens / 1_000_000) * price.output
+    : 0;
+
   console.log(
-    `[curate] tokens used — input: ${usage?.input_tokens}, output: ${usage?.output_tokens}, total: ${usage?.total_tokens}`
+    `[curate] tokens — input: ${inputTokens}, output: ${outputTokens}, total: ${totalTokens}, cost: $${costUsd.toFixed(
+      4
+    )}`
   );
 
+  const { data: billing } = await supabaseAdmin
+    .from("billing_state")
+    .select("credit_balance_usd")
+    .eq("id", 1)
+    .single();
+
+  const balanceAfter = (billing?.credit_balance_usd ?? 0) - costUsd;
+
+  await supabaseAdmin
+    .from("billing_state")
+    .update({ credit_balance_usd: balanceAfter })
+    .eq("id", 1);
+
   await supabaseAdmin.from("api_usage").insert({
-    input_tokens: usage?.input_tokens ?? 0,
-    output_tokens: usage?.output_tokens ?? 0,
-    total_tokens: usage?.total_tokens ?? 0,
+    input_tokens: inputTokens,
+    output_tokens: outputTokens,
+    total_tokens: totalTokens,
+    model: MODEL,
+    cost_usd: costUsd,
+    balance_after: balanceAfter,
   });
 
   const parsed = JSON.parse(response.output_text);
