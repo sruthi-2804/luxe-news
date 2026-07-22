@@ -109,12 +109,25 @@ export async function runCuration() {
 
   const parsed = JSON.parse(response.output_text);
 
+  // The model doesn't always obey "last 24 hours" strictly, so enforce it here too
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 3);
+
+  const freshArticles = parsed.articles.filter((article: { published_at: string }) => {
+    const publishedDate = new Date(article.published_at);
+    return !isNaN(publishedDate.getTime()) && publishedDate >= cutoff;
+  });
+
+  console.log(
+    `[curate] ${parsed.articles.length} articles returned, ${freshArticles.length} passed the recency filter`
+  );
+
   // Replace old articles with this fresh batch, instead of piling up duplicates
   await supabaseAdmin.from("articles").delete().neq("id", 0);
 
   const { data, error } = await supabaseAdmin
     .from("articles")
-    .insert(parsed.articles)
+    .insert(freshArticles)
     .select();
 
   if (error) throw new Error(error.message);
