@@ -30,7 +30,7 @@ export default async function Home() {
     <ScrollGate isLoggedIn={!!user}>
       <div className="min-h-screen bg-white">
         <header className="sticky top-0 z-10 bg-white">
-          <div className="max-w-3xl mx-auto px-6 py-6 grid grid-cols-3 items-center">
+          <div className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-3 items-center">
             <div />
             <div className="text-center">
               <h1 className="font-serif uppercase text-4xl sm:text-5xl tracking-[0.08em] text-black">
@@ -60,19 +60,22 @@ export default async function Home() {
           <div className="h-px bg-black" />
         </header>
 
-        <main className="max-w-3xl mx-auto px-6 py-10">
+        <main className="max-w-7xl mx-auto px-6 py-10">
           {articles && articles.length > 0 && (
             <p className="text-xs uppercase tracking-widest text-zinc-400 mb-8">
               {articles.length} stories curated today
             </p>
           )}
-          <div className="flex flex-col">
-            {articles?.map((article, index) => (
-              <ArticleCard
-                key={article.id}
-                article={article}
-                featured={index === 0}
-              />
+
+          {articles?.[0] && (
+            <div className="mb-10 pb-10 border-b-2 border-black">
+              <ArticleCard article={articles[0]} featured />
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {articles?.slice(1).map((article) => (
+              <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         </main>
