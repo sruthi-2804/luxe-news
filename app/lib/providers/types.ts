@@ -24,7 +24,7 @@ export const TOPICS = [
   "Prada news",
   "Hermès news",
   "luxury fashion business news: earnings, acquisitions, executive appointments",
-  "luxury fashion runway shows and fashion week news",
+  "upcoming luxury fashion week schedules and runway show dates for major brands like Chanel, Dior, Gucci, Prada, and Louis Vuitton",
   "luxury fashion designer and creative director appointments",
   "luxury fashion retail, sustainability, and brand launch news",
 ];

@@ -25,13 +25,10 @@ export default function FashionWeekSlideshow({
   return (
     <div className="mb-10 pb-10 border-b-2 border-black">
       <p className="text-[11px] uppercase tracking-[0.2em] font-semibold text-zinc-500 mb-4">
-        Fashion Week Schedule
+        Runway Calendar
       </p>
       <div className="min-h-[9rem]">
-        <span className="inline-block text-[11px] uppercase tracking-[0.15em] font-semibold text-zinc-500">
-          {article.category}
-        </span>
-        <h2 className="font-serif text-black mt-2 mb-3 text-3xl sm:text-4xl leading-tight">
+        <h2 className="font-serif text-black mb-3 text-3xl sm:text-4xl leading-tight">
           {article.title}
         </h2>
         <p className="text-zinc-600 text-base mb-3 max-w-2xl">
