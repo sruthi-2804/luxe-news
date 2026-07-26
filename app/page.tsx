@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ArticleCard from "./components/ArticleCard";
+import FashionWeekSlideshow from "./components/FashionWeekSlideshow";
 import SignOutButton from "./components/SignOutButton";
 import ScrollGate from "./components/ScrollGate";
 import { createClient } from "./lib/supabase/server";
@@ -25,6 +26,14 @@ export default async function Home() {
     .from("articles")
     .select("*")
     .order("published_at", { ascending: false });
+
+  const isScheduleArticle = (article: { category: string; title: string }) =>
+    article.category.toLowerCase().includes("schedule") ||
+    article.category.toLowerCase().includes("fashion week") ||
+    article.title.toLowerCase().includes("fashion week");
+
+  const scheduleArticles = articles?.filter(isScheduleArticle) ?? [];
+  const otherArticles = articles?.filter((a) => !isScheduleArticle(a)) ?? [];
 
   return (
     <ScrollGate isLoggedIn={!!user}>
@@ -67,14 +76,10 @@ export default async function Home() {
             </p>
           )}
 
-          {articles?.[0] && (
-            <div className="mb-10 pb-10 border-b-2 border-black">
-              <ArticleCard article={articles[0]} featured />
-            </div>
-          )}
+          <FashionWeekSlideshow articles={scheduleArticles} />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {articles?.slice(1).map((article) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {otherArticles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
