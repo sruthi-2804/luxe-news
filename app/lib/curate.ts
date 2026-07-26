@@ -45,11 +45,27 @@ export async function runCuration() {
     return true;
   });
 
+  // The model doesn't always obey "English only" strictly, so enforce it here too.
+  // Matches CJK, Japanese kana, Hangul, Arabic, and Cyrillic script characters.
+  const nonEnglishScript =
+    /[一-鿿぀-ヿ가-힯؀-ۿЀ-ӿ]/;
+
+  const englishOnly = deduped.filter((article) => {
+    const text = `${article.title} ${article.summary} ${article.source}`;
+    const isEnglish = !nonEnglishScript.test(text);
+    if (!isEnglish) {
+      console.log(
+        `[curate] rejected as non-English: "${article.title}" — source: "${article.source}"`
+      );
+    }
+    return isEnglish;
+  });
+
   // The model doesn't always obey "last 24 hours" strictly, so enforce it here too
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 3);
 
-  const freshArticles = deduped.filter((article) => {
+  const freshArticles = englishOnly.filter((article) => {
     const publishedDate = new Date(article.published_at);
     const isFresh = !isNaN(publishedDate.getTime()) && publishedDate >= cutoff;
     if (!isFresh) {
@@ -66,7 +82,7 @@ export async function runCuration() {
     (outputTokens / 1_000_000) * price.output;
 
   console.log(
-    `[curate] provider: ${providerName}, ${TOPICS.length} searches — ${allArticles.length} raw, ${deduped.length} after dedupe, ${freshArticles.length} after recency filter`
+    `[curate] provider: ${providerName}, ${TOPICS.length} searches — ${allArticles.length} raw, ${deduped.length} after dedupe, ${englishOnly.length} after language filter, ${freshArticles.length} after recency filter`
   );
   console.log(
     `[curate] tokens — input: ${inputTokens}, output: ${outputTokens}, cost: $${costUsd.toFixed(
