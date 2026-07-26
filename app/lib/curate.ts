@@ -1,101 +1,39 @@
-import OpenAI from "openai";
 import { supabaseAdmin } from "./supabaseAdmin";
+import { TOPICS, type CuratedArticle } from "./providers/types";
+import * as openaiProvider from "./providers/openai";
+import * as claudeProvider from "./providers/claude";
+import * as geminiProvider from "./providers/gemini";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const PROVIDERS = {
+  openai: openaiProvider,
+  claude: claudeProvider,
+  gemini: geminiProvider,
+} as const;
 
-// Price per 1 million tokens, in USD. Update if the model changes.
-const PRICING: Record<string, { input: number; output: number }> = {
-  "gpt-5.4-nano": { input: 0.2, output: 1.25 },
-  "gpt-5.6-luna": { input: 1.0, output: 6.0 },
-  "gpt-5.6-terra": { input: 2.5, output: 15.0 },
-  "gpt-5.6-sol": { input: 5.0, output: 30.0 },
-};
-
-const MODEL = "gpt-5.4-nano";
-
-const SYSTEM_PROMPT =
-  "You are a luxury fashion news editor. Search the web for luxury fashion news published in the last 24 hours. Return EVERY distinct, genuine story you find on the given topic — do not artificially cap the count. For 'source', give ONLY the publication's name (e.g. 'Vogue Business'), never a link or markdown formatting. Put the direct article link in 'url'. Only include articles actually published within the last 24 hours.";
-
-const ARTICLE_SCHEMA = {
-  type: "json_schema" as const,
-  name: "curated_articles",
-  schema: {
-    type: "object",
-    properties: {
-      articles: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            title: { type: "string" },
-            summary: { type: "string" },
-            category: { type: "string" },
-            source: { type: "string" },
-            url: { type: "string" },
-            published_at: { type: "string" },
-          },
-          required: [
-            "title",
-            "summary",
-            "category",
-            "source",
-            "url",
-            "published_at",
-          ],
-          additionalProperties: false,
-        },
-      },
-    },
-    required: ["articles"],
-    additionalProperties: false,
-  },
-  strict: true,
-};
-
-const TOPICS = [
-  "luxury fashion runway shows and fashion week news",
-  "luxury fashion designer and creative director moves",
-  "luxury fashion business news: earnings, acquisitions, executive appointments",
-  "luxury fashion retail, sustainability, and brand launch news",
-];
-
-async function searchTopic(topic: string) {
-  return openai.responses.create({
-    model: MODEL,
-    tools: [{ type: "web_search" }],
-    input: [
-      { role: "system", content: SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: `Search for: ${topic}. Published in the last 24 hours. Return every distinct story you find as structured articles.`,
-      },
-    ],
-    text: { format: ARTICLE_SCHEMA },
-  });
-}
+type ProviderName = keyof typeof PROVIDERS;
 
 export async function runCuration() {
-  const responses = await Promise.all(TOPICS.map(searchTopic));
+  const { data: settings } = await supabaseAdmin
+    .from("app_settings")
+    .select("active_provider")
+    .eq("id", 1)
+    .single();
+
+  const providerName = (settings?.active_provider ?? "openai") as ProviderName;
+  const provider = PROVIDERS[providerName];
+
+  const results = await Promise.all(
+    TOPICS.map((topic) => provider.searchTopic(topic))
+  );
 
   let inputTokens = 0;
   let outputTokens = 0;
-  let totalTokens = 0;
-  const allArticles: {
-    title: string;
-    summary: string;
-    category: string;
-    source: string;
-    url: string;
-    published_at: string;
-  }[] = [];
+  const allArticles: CuratedArticle[] = [];
 
-  for (const response of responses) {
-    inputTokens += response.usage?.input_tokens ?? 0;
-    outputTokens += response.usage?.output_tokens ?? 0;
-    totalTokens += response.usage?.total_tokens ?? 0;
-
-    const parsed = JSON.parse(response.output_text);
-    allArticles.push(...parsed.articles);
+  for (const result of results) {
+    inputTokens += result.inputTokens;
+    outputTokens += result.outputTokens;
+    allArticles.push(...result.articles);
   }
 
   // Dedupe: the 4 topic searches can overlap on the same story
@@ -116,17 +54,16 @@ export async function runCuration() {
     return !isNaN(publishedDate.getTime()) && publishedDate >= cutoff;
   });
 
-  const price = PRICING[MODEL];
-  const costUsd = price
-    ? (inputTokens / 1_000_000) * price.input +
-      (outputTokens / 1_000_000) * price.output
-    : 0;
+  const price = provider.PRICING;
+  const costUsd =
+    (inputTokens / 1_000_000) * price.input +
+    (outputTokens / 1_000_000) * price.output;
 
   console.log(
-    `[curate] ${TOPICS.length} searches — ${allArticles.length} raw, ${deduped.length} after dedupe, ${freshArticles.length} after recency filter`
+    `[curate] provider: ${providerName}, ${TOPICS.length} searches — ${allArticles.length} raw, ${deduped.length} after dedupe, ${freshArticles.length} after recency filter`
   );
   console.log(
-    `[curate] tokens — input: ${inputTokens}, output: ${outputTokens}, total: ${totalTokens}, cost: $${costUsd.toFixed(
+    `[curate] tokens — input: ${inputTokens}, output: ${outputTokens}, cost: $${costUsd.toFixed(
       4
     )}`
   );
@@ -147,8 +84,9 @@ export async function runCuration() {
   await supabaseAdmin.from("api_usage").insert({
     input_tokens: inputTokens,
     output_tokens: outputTokens,
-    total_tokens: totalTokens,
-    model: MODEL,
+    total_tokens: inputTokens + outputTokens,
+    model: providerName,
+    provider: providerName,
     cost_usd: costUsd,
     balance_after: balanceAfter,
   });

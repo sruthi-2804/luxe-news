@@ -1,6 +1,5 @@
 import Link from "next/link";
 import ArticleCard from "./components/ArticleCard";
-import RefreshButton from "./components/RefreshButton";
 import SignOutButton from "./components/SignOutButton";
 import ScrollGate from "./components/ScrollGate";
 import { createClient } from "./lib/supabase/server";
@@ -11,6 +10,16 @@ export default async function Home() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", user.id)
+      .single();
+    isAdmin = !!profile?.is_admin;
+  }
 
   const { data: articles } = await supabase
     .from("articles")
@@ -33,7 +42,14 @@ export default async function Home() {
             <div className="flex items-center gap-4">
               {user ? (
                 <>
-                  <RefreshButton />
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="text-sm font-medium text-zinc-900 hover:underline"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <SignOutButton />
                 </>
               ) : (
