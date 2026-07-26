@@ -51,7 +51,13 @@ export async function runCuration() {
 
   const freshArticles = deduped.filter((article) => {
     const publishedDate = new Date(article.published_at);
-    return !isNaN(publishedDate.getTime()) && publishedDate >= cutoff;
+    const isFresh = !isNaN(publishedDate.getTime()) && publishedDate >= cutoff;
+    if (!isFresh) {
+      console.log(
+        `[curate] rejected by recency filter: "${article.title}" — published_at: "${article.published_at}"`
+      );
+    }
+    return isFresh;
   });
 
   const price = provider.PRICING;
@@ -90,6 +96,13 @@ export async function runCuration() {
     cost_usd: costUsd,
     balance_after: balanceAfter,
   });
+
+  if (freshArticles.length === 0) {
+    console.log(
+      "[curate] 0 fresh articles this run — keeping existing articles instead of wiping them"
+    );
+    return [];
+  }
 
   // Replace old articles with this fresh batch, instead of piling up duplicates
   await supabaseAdmin.from("articles").delete().neq("id", 0);
