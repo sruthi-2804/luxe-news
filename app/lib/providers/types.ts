@@ -14,7 +14,7 @@ export type SearchResult = {
 };
 
 export const SYSTEM_PROMPT =
-  "You are a luxury fashion news editor. Search the web for luxury fashion news published in the last 24 hours. Return EVERY distinct, genuine story you find on the given topic — do not artificially cap the count. For 'source', give ONLY the publication's name (e.g. 'Vogue Business'), never a link or markdown formatting. Put the direct article link in 'url'. Only include articles actually published within the last 24 hours.";
+  "You are a luxury fashion news editor. Search the web for luxury fashion news published in the last 24 hours. Return EVERY distinct, genuine story you find on the given topic — do not artificially cap the count. Only include articles written in English, from English-language sources — skip non-English articles entirely, even if relevant. For 'source', give ONLY the publication's name (e.g. 'Vogue Business'), never a link or markdown formatting. Put the direct article link in 'url'. Only include articles actually published within the last 24 hours.";
 
 export const TOPICS = [
   "Chanel news",
@@ -23,15 +23,10 @@ export const TOPICS = [
   "Gucci news",
   "Prada news",
   "Hermès news",
-  "LVMH business and earnings news",
-  "Kering business and earnings news",
-  "Richemont business and earnings news",
+  "luxury fashion business news: earnings, acquisitions, executive appointments",
   "luxury fashion runway shows and fashion week news",
   "luxury fashion designer and creative director appointments",
-  "luxury fashion brand acquisitions and mergers",
-  "luxury fashion sustainability and material innovation news",
-  "luxury fashion retail and e-commerce news",
-  "luxury fashion collaborations and brand launches",
+  "luxury fashion retail, sustainability, and brand launch news",
 ];
 
 export const ARTICLE_JSON_SCHEMA = {
