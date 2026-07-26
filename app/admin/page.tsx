@@ -97,13 +97,19 @@ export default async function AdminPage() {
                   <td className="py-2 pr-4 text-zinc-500">
                     {new Date(row.created_at).toLocaleString()}
                   </td>
-                  <td className="py-2 pr-4">{row.provider ?? row.model}</td>
-                  <td className="py-2 pr-4">{row.input_tokens}</td>
-                  <td className="py-2 pr-4">{row.output_tokens}</td>
-                  <td className="py-2 pr-4">
+                  <td className="py-2 pr-4 text-zinc-900">
+                    {row.provider ?? row.model}
+                  </td>
+                  <td className="py-2 pr-4 text-zinc-900">
+                    {row.input_tokens}
+                  </td>
+                  <td className="py-2 pr-4 text-zinc-900">
+                    {row.output_tokens}
+                  </td>
+                  <td className="py-2 pr-4 text-zinc-900">
                     {row.cost_usd != null ? `$${row.cost_usd.toFixed(4)}` : "—"}
                   </td>
-                  <td className="py-2">
+                  <td className="py-2 text-zinc-900">
                     {row.balance_after != null
                       ? `$${row.balance_after.toFixed(4)}`
                       : "—"}
@@ -127,8 +133,10 @@ export default async function AdminPage() {
             <tbody>
               {users?.map((u) => (
                 <tr key={u.email} className="border-b border-stone-100">
-                  <td className="py-2 pr-4">{u.email}</td>
-                  <td className="py-2 pr-4">{u.is_admin ? "Yes" : "No"}</td>
+                  <td className="py-2 pr-4 text-zinc-900">{u.email}</td>
+                  <td className="py-2 pr-4 text-zinc-900">
+                    {u.is_admin ? "Yes" : "No"}
+                  </td>
                   <td className="py-2 text-zinc-500">
                     {new Date(u.created_at).toLocaleDateString()}
                   </td>
