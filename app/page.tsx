@@ -29,13 +29,13 @@ export default async function Home() {
   return (
     <ScrollGate isLoggedIn={!!user}>
       <div className="min-h-screen bg-gradient-to-b from-stone-100 via-stone-50 to-stone-100">
-        <header className="border-b border-stone-200 bg-stone-50/80 backdrop-blur">
-          <div className="max-w-5xl mx-auto px-6 py-8 flex items-center justify-between">
+        <header className="border-b border-amber-800/20 bg-stone-50/80 backdrop-blur sticky top-0 z-10">
+          <div className="max-w-5xl mx-auto px-6 py-7 flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-serif tracking-tight text-zinc-900">
+              <h1 className="text-4xl font-serif italic tracking-tight text-zinc-900">
                 Luxe News
               </h1>
-              <p className="text-zinc-500 mt-1">
+              <p className="text-zinc-500 mt-1 text-sm tracking-wide">
                 Curated luxury fashion news, organized for you.
               </p>
             </div>
@@ -65,8 +65,18 @@ export default async function Home() {
         </header>
 
         <main className="max-w-5xl mx-auto px-6 py-10">
+          {articles && articles.length > 0 && (
+            <p className="text-xs uppercase tracking-widest text-zinc-400 mb-6">
+              {articles.length} stories curated today
+            </p>
+          )}
+          {articles?.[0] && (
+            <div className="mb-6">
+              <ArticleCard article={articles[0]} featured />
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {articles?.map((article) => (
+            {articles?.slice(1).map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
