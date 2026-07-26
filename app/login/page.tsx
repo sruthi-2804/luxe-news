@@ -8,12 +8,14 @@ export default async function LoginPage({
   const { error, message } = await searchParams;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-stone-100 via-stone-50 to-stone-100 px-4">
-      <div className="w-full max-w-sm bg-white border border-stone-200 rounded-lg shadow-sm p-8">
-        <h1 className="text-3xl font-serif tracking-tight text-zinc-900 mb-1">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="w-full max-w-sm border-t-2 border-black pt-8">
+        <h1 className="font-serif uppercase text-3xl tracking-[0.08em] text-black text-center mb-1">
           Luxe News
         </h1>
-        <p className="text-zinc-500 mb-6">Sign in to read curated news.</p>
+        <p className="text-zinc-500 mb-6 text-center text-xs uppercase tracking-[0.15em]">
+          Sign in to read curated news
+        </p>
 
         {error && (
           <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2">
