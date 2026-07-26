@@ -18,11 +18,7 @@ export default function ArticleCard({
   featured?: boolean;
 }) {
   return (
-    <article
-      className={`group ${
-        featured ? "text-center" : "py-8 border-b border-zinc-200"
-      }`}
-    >
+    <article className="group py-8 border-b border-zinc-200">
       <span className="inline-block text-[11px] uppercase tracking-[0.15em] font-semibold text-zinc-500">
         {article.category}
       </span>
@@ -33,18 +29,10 @@ export default function ArticleCard({
       >
         {article.title}
       </h2>
-      <p
-        className={`text-zinc-600 mb-3 ${
-          featured ? "text-base max-w-xl mx-auto" : "text-sm"
-        }`}
-      >
+      <p className={`text-zinc-600 mb-3 ${featured ? "text-lg" : "text-sm"}`}>
         {article.summary}
       </p>
-      <div
-        className={`text-xs text-zinc-400 flex items-center gap-3 ${
-          featured ? "justify-center" : ""
-        }`}
-      >
+      <div className="text-xs text-zinc-400 flex items-center gap-3">
         <span className="uppercase tracking-wide font-medium text-zinc-500">
           {article.source}
         </span>
