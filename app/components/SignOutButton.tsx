@@ -5,9 +5,9 @@ export default function SignOutButton() {
     <form action={signOut}>
       <button
         type="submit"
-        className="text-sm text-zinc-500 hover:text-zinc-900 underline"
+        className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-900"
       >
-        Sign out
+        Sign Out
       </button>
     </form>
   );
