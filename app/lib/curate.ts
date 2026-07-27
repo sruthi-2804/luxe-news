@@ -282,7 +282,10 @@ export async function runCuration(trigger: "manual" | "cron" = "manual") {
     const { data, error } = await supabaseAdmin
       .from("articles")
       .insert(
-        ranked.map((a, i) => ({ ...a, ...images[i], state: "pending" }))
+        ranked.map((a, i) => {
+          const { image_url, image_kind, image_credit } = images[i];
+          return { ...a, image_url, image_kind, image_credit, state: "pending" };
+        })
       )
       .select();
 
