@@ -12,6 +12,8 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const MODEL = "claude-haiku-4-5";
 
 export const PRICING = { input: 1.0, output: 5.0 };
+// web_search is billed separately from tokens: $10 per 1,000 calls.
+export const WEB_SEARCH_COST_PER_CALL = 0.01;
 
 export async function searchTopic(
   topic: string,
@@ -47,6 +49,7 @@ export async function searchTopic(
     articles: parsed.articles,
     inputTokens: response.usage?.input_tokens ?? 0,
     outputTokens: response.usage?.output_tokens ?? 0,
+    toolCalls: response.usage?.server_tool_use?.web_search_requests ?? 0,
   };
 }
 
@@ -85,5 +88,6 @@ export async function findBrandImage(
     image_url: parsed.image_url ?? null,
     inputTokens: response.usage?.input_tokens ?? 0,
     outputTokens: response.usage?.output_tokens ?? 0,
+    toolCalls: response.usage?.server_tool_use?.web_search_requests ?? 0,
   };
 }

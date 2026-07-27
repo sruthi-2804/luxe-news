@@ -16,6 +16,7 @@ export type ResolvedImage = {
   image_credit: string | null;
   inputTokens: number;
   outputTokens: number;
+  toolCalls: number;
 };
 
 // Guards against the model returning an image from somewhere other than the
@@ -60,6 +61,7 @@ export async function resolveImages<
               image_credit: `Picture · ${article.source}`,
               inputTokens: 0,
               outputTokens: 0,
+              toolCalls: 0,
             };
           }
         }
@@ -78,6 +80,7 @@ export async function resolveImages<
           image_credit: `File picture · ${brandMatch.brand}`,
           inputTokens: 0,
           outputTokens: 0,
+          toolCalls: 0,
         };
       }
 
@@ -92,6 +95,7 @@ export async function resolveImages<
       const tokens = {
         inputTokens: found.inputTokens,
         outputTokens: found.outputTokens,
+        toolCalls: found.toolCalls,
       };
 
       if (found.brand && found.image_url && looksOfficial(found.brand, found.image_url)) {

@@ -12,6 +12,17 @@ const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODEL = "gemini-3.5-flash-lite";
 
 export const PRICING = { input: 0.3, output: 2.5 };
+// google_search grounding on Gemini 3.x is billed separately from tokens:
+// $14 per 1,000 grounded queries (first 5,000/month are free, which this
+// doesn't account for — treat this as a worst-case estimate).
+export const WEB_SEARCH_COST_PER_CALL = 0.014;
+
+function countGroundingCalls(usage: Record<string, unknown> | undefined) {
+  const counts = usage?.grounding_tool_count as
+    | Array<{ count?: number }>
+    | undefined;
+  return counts?.reduce((sum, g) => sum + (g.count ?? 0), 0) ?? 0;
+}
 
 export async function searchTopic(
   topic: string,
@@ -33,17 +44,21 @@ export async function searchTopic(
   console.log("[gemini] raw usage object:", JSON.stringify(interaction.usage));
 
   const parsed = JSON.parse(interaction.output_text ?? '{"articles":[]}');
-  const usage = interaction.usage as unknown as Record<string, number>;
+  const usage = interaction.usage as unknown as Record<string, unknown>;
 
   return {
     articles: parsed.articles,
     inputTokens:
-      usage?.inputTokens ?? usage?.promptTokenCount ?? usage?.input_tokens ?? 0,
-    outputTokens:
-      usage?.outputTokens ??
-      usage?.responseTokenCount ??
-      usage?.output_tokens ??
+      (usage?.inputTokens as number) ??
+      (usage?.promptTokenCount as number) ??
+      (usage?.input_tokens as number) ??
       0,
+    outputTokens:
+      (usage?.outputTokens as number) ??
+      (usage?.responseTokenCount as number) ??
+      (usage?.output_tokens as number) ??
+      0,
+    toolCalls: countGroundingCalls(usage),
   };
 }
 
@@ -66,17 +81,21 @@ export async function findBrandImage(
   const parsed = JSON.parse(
     interaction.output_text ?? '{"brand":null,"image_url":null}'
   );
-  const usage = interaction.usage as unknown as Record<string, number>;
+  const usage = interaction.usage as unknown as Record<string, unknown>;
 
   return {
     brand: parsed.brand ?? null,
     image_url: parsed.image_url ?? null,
     inputTokens:
-      usage?.inputTokens ?? usage?.promptTokenCount ?? usage?.input_tokens ?? 0,
-    outputTokens:
-      usage?.outputTokens ??
-      usage?.responseTokenCount ??
-      usage?.output_tokens ??
+      (usage?.inputTokens as number) ??
+      (usage?.promptTokenCount as number) ??
+      (usage?.input_tokens as number) ??
       0,
+    outputTokens:
+      (usage?.outputTokens as number) ??
+      (usage?.responseTokenCount as number) ??
+      (usage?.output_tokens as number) ??
+      0,
+    toolCalls: countGroundingCalls(usage),
   };
 }

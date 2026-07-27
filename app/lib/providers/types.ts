@@ -22,6 +22,7 @@ export type SearchResult = {
   articles: CuratedArticle[];
   inputTokens: number;
   outputTokens: number;
+  toolCalls: number;
 };
 
 export type BrandImageResult = {
@@ -29,6 +30,7 @@ export type BrandImageResult = {
   image_url: string | null;
   inputTokens: number;
   outputTokens: number;
+  toolCalls: number;
 };
 
 export const BRAND_IMAGE_JSON_SCHEMA = {

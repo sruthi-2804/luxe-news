@@ -157,11 +157,13 @@ export async function runCuration(trigger: "manual" | "cron" = "manual") {
 
     let inputTokens = 0;
     let outputTokens = 0;
+    let toolCalls = 0;
     const allArticles: CuratedArticle[] = [];
 
     for (const result of results) {
       inputTokens += result.inputTokens;
       outputTokens += result.outputTokens;
+      toolCalls += result.toolCalls;
       allArticles.push(...result.articles);
     }
 
@@ -220,7 +222,8 @@ export async function runCuration(trigger: "manual" | "cron" = "manual") {
       const price = provider.PRICING;
       const costUsd =
         (inputTokens / 1_000_000) * price.input +
-        (outputTokens / 1_000_000) * price.output;
+        (outputTokens / 1_000_000) * price.output +
+        toolCalls * provider.WEB_SEARCH_COST_PER_CALL;
       const balanceAfter = currentBalance - costUsd;
       await supabaseAdmin
         .from("billing_state")
@@ -253,12 +256,14 @@ export async function runCuration(trigger: "manual" | "cron" = "manual") {
     for (const image of images) {
       inputTokens += image.inputTokens;
       outputTokens += image.outputTokens;
+      toolCalls += image.toolCalls;
     }
 
     const price = provider.PRICING;
     const costUsd =
       (inputTokens / 1_000_000) * price.input +
-      (outputTokens / 1_000_000) * price.output;
+      (outputTokens / 1_000_000) * price.output +
+      toolCalls * provider.WEB_SEARCH_COST_PER_CALL;
     const balanceAfter = currentBalance - costUsd;
 
     await supabaseAdmin

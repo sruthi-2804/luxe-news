@@ -12,6 +12,13 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const MODEL = "gpt-5.4-nano";
 
 export const PRICING = { input: 0.2, output: 1.25 };
+// web_search is billed separately from tokens: $10 per 1,000 calls.
+export const WEB_SEARCH_COST_PER_CALL = 0.01;
+
+function countWebSearchCalls(response: { output: { type: string }[] }) {
+  return response.output.filter((item) => item.type === "web_search_call")
+    .length;
+}
 
 export async function searchTopic(
   topic: string,
@@ -43,6 +50,7 @@ export async function searchTopic(
     articles: parsed.articles,
     inputTokens: response.usage?.input_tokens ?? 0,
     outputTokens: response.usage?.output_tokens ?? 0,
+    toolCalls: countWebSearchCalls(response),
   };
 }
 
@@ -74,5 +82,6 @@ export async function findBrandImage(
     image_url: parsed.image_url ?? null,
     inputTokens: response.usage?.input_tokens ?? 0,
     outputTokens: response.usage?.output_tokens ?? 0,
+    toolCalls: countWebSearchCalls(response),
   };
 }
