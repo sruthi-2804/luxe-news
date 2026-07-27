@@ -17,7 +17,7 @@ export default function ProviderSelector({ active }: { active: string }) {
       {PROVIDERS.map((p) => (
         <label
           key={p.id}
-          className="flex items-center gap-2 text-sm text-zinc-900"
+          className="flex items-center gap-2 text-sm text-ink"
         >
           <input
             type="radio"

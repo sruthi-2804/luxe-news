@@ -40,18 +40,18 @@ export default function ScrollGate({
     <>
       {children}
       {showGate && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center px-4 z-50">
-          <div className="w-full max-w-sm bg-white rounded-lg p-8 text-center">
-            <h2 className="text-xl font-bold text-zinc-900 mb-2">
+        <div className="fixed inset-0 bg-ink/60 flex items-center justify-center px-4 z-50">
+          <div className="w-full max-w-sm bg-paper rounded-lg p-8 text-center">
+            <h2 className="text-xl font-bold tracking-[-0.03em] text-ink mb-2">
               Keep reading Luxe News
             </h2>
-            <p className="text-zinc-500 mb-6">
+            <p className="text-muted mb-6">
               Sign in or create an account to see the rest of today&apos;s
               curated stories.
             </p>
             <Link
               href="/login"
-              className="block rounded bg-zinc-900 text-white px-4 py-2 text-sm font-medium hover:bg-zinc-700"
+              className="block rounded-full bg-ink text-paper px-4 py-2.5 text-sm font-medium hover:opacity-[0.82]"
             >
               Sign In / Create Account
             </Link>

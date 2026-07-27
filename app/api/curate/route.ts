@@ -7,6 +7,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const articles = await runCuration();
+  const articles = await runCuration("cron");
   return NextResponse.json({ inserted: articles.length, articles });
 }

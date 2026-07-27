@@ -1,4 +1,6 @@
-import { signIn, signUp } from "./actions";
+import { supabaseAdmin } from "../lib/supabaseAdmin";
+import { relativeTime } from "../lib/relativeTime";
+import AuthCard from "./AuthCard";
 
 export default async function LoginPage({
   searchParams,
@@ -7,56 +9,53 @@ export default async function LoginPage({
 }) {
   const { error, message } = await searchParams;
 
+  const { data: articles } = await supabaseAdmin
+    .from("articles")
+    .select("source");
+
+  const { data: lastRun } = await supabaseAdmin
+    .from("api_usage")
+    .select("created_at")
+    .is("error", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  const storyCount = articles?.length ?? 10;
+  const sourceCount = new Set(articles?.map((a) => a.source)).size || 60;
+  const refreshedAgo = lastRun ? relativeTime(lastRun.created_at) : null;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="w-full max-w-sm border-t-2 border-black pt-8">
-        <h1 className="font-serif uppercase text-3xl tracking-[0.08em] text-black text-center mb-1">
-          Luxe News
-        </h1>
-        <p className="text-zinc-500 mb-6 text-center text-xs uppercase tracking-[0.15em]">
-          Sign in to read curated news
-        </p>
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
+      <div className="hidden lg:flex flex-col justify-between p-14 border-r border-line">
+        <div className="text-[21px] font-bold tracking-[-0.03em]">
+          LUXE NEWS<span className="text-accent">.</span>
+        </div>
 
-        {error && (
-          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2">
-            {error}
+        <div className="max-w-[620px]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted mb-7">
+            The luxury desk
           </p>
-        )}
-        {message && (
-          <p className="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded p-2">
-            {message}
+          <h1 className="text-[clamp(46px,5.6vw,86px)] leading-[0.92] tracking-[-0.045em] font-semibold text-balance">
+            Every story that moved luxury fashion. Twice a day
+            <span className="text-accent">.</span>
+          </h1>
+          <p className="text-lg leading-[1.6] text-muted mt-8 max-w-[44ch]">
+            {storyCount} stories, read and organised for you before 8am and
+            8pm. Runway, retail, business, creative leadership. No feed, no
+            noise.
           </p>
-        )}
+        </div>
 
-        <form className="flex flex-col gap-4">
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            required
-            className="border border-zinc-300 rounded px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 bg-white"
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            required
-            minLength={6}
-            className="border border-zinc-300 rounded px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 bg-white"
-          />
-          <button
-            formAction={signIn}
-            className="rounded bg-zinc-900 text-white px-4 py-2 text-sm font-medium hover:bg-zinc-700"
-          >
-            Sign In
-          </button>
-          <button
-            formAction={signUp}
-            className="rounded border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
-          >
-            Create Account
-          </button>
-        </form>
+        <div className="flex gap-10 text-[13px] text-muted">
+          <span>Refreshed every 12 hours</span>
+          <span>{storyCount} stories per edition</span>
+          <span>Sourced from {sourceCount}+ desks</span>
+        </div>
+      </div>
+
+      <div className="p-14 flex flex-col justify-center items-center lg:items-start">
+        <AuthCard error={error} message={message} refreshedAgo={refreshedAgo} />
       </div>
     </div>
   );
