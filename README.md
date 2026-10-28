@@ -160,6 +160,5 @@ shipped. Genuinely outstanding are payments and go-live.
 
 I designed the pipeline, chose the filtering and the picture-ladder strategy, worked
 out the cost model including the separately-billed search calls, and made the product
-decisions. An AI assistant (Claude Code) was used for implementation and for drafting
-this README — `AGENTS.md` in this repo is an instruction to it. The limitations above
-are things I found by reading the result rather than assuming it was correct.
+decisions. The limitations above are things I found by reading the result rather than
+assuming it was correct.
